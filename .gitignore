@@ -1,0 +1,4 @@
+mini-nginx
+*.o
+*.log
+.DS_Store

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nam Dao Vu Phuong — Software Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0c0e12;
+      --bg2:       #131720;
+      --bg3:       #1a2030;
+      --line:      #ffffff0f;
+      --amber:     #f5a623;
+      --amber-dim: #f5a62355;
+      --amber-glow:#f5a62318;
+      --white:     #e8ecf2;
+      --muted:     #6b778d;
+      --green:     #4caf7d;
+      --red:       #e05c5c;
+    }
+
+    /* ── LIGHT THEME ── */
+    [data-theme="light"] {
+      --bg:        #f5f4f0;
+      --bg2:       #eceae4;
+      --bg3:       #e0ddd5;
+      --line:      #00000012;
+      --amber:     #c47d0e;
+      --amber-dim: #c47d0e55;
+      --amber-glow:#c47d0e14;
+      --white:     #1a1c22;
+      --muted:     #7a7568;
+      --green:     #2e8c5a;
+      --red:       #c0392b;
+    }
+    [data-theme="light"] body::before { opacity: 0.015; }
+    [data-theme="light"] body::after  { display: none; }
+    [data-theme="light"] .project-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SCANLINES ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      padding: 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      animation: fadeDown 0.5s ease both;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot.r { background: var(--red); }
+    .dot.y { background: var(--amber); }
+    .dot.g { background: var(--green); }
+    .dots { display: flex; gap: 6px; margin-right: 12px; }
+    .tab-label { color: var(--white); background: var(--bg2); padding: 3px 12px; border-radius: 4px; font-size: 11px; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 0 60px;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    .prompt-line {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .prompt-line span.p { color: var(--green); }
+    .prompt-line span.at { color: var(--amber); }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(38px, 7vw, 68px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.0;
+      margin-bottom: 16px;
+    }
+    .hero h1 .hl { color: var(--amber); }
+    .hero .tagline {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 500px;
+      margin-bottom: 32px;
+      border-left: 2px solid var(--amber);
+      padding-left: 14px;
+      line-height: 1.9;
+    }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--amber);
+      color: #000;
+      border: 1px solid var(--amber);
+    }
+    .btn-primary:hover { background: #ffbe55; transform: translateY(-1px); box-shadow: 0 8px 24px var(--amber-dim); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid var(--line);
+    }
+    .btn-ghost:hover { border-color: var(--amber); color: var(--amber); transform: translateY(-1px); }
+    .ico { font-size: 15px; }
+
+    /* ── STATUS BADGE ── */
+    .status {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--bg2);
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section { padding: 60px 0; border-top: 1px solid var(--line); }
+    .sec-label {
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sec-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+    /* ── SKILLS GRID ── */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .skill-card {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      transition: all 0.2s;
+      animation: fadeUp 0.6s ease both;
+    }
+    .skill-card:hover { border-color: var(--amber-dim); background: var(--bg3); transform: translateY(-2px); }
+    .skill-card .cat { font-size: 10px; color: var(--amber); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .skill-card .items { font-size: 12px; color: var(--muted); line-height: 2; }
+    .skill-card .items span { color: var(--white); }
+
+    /* ── PROJECTS ── */
+    .project-card {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 28px;
+      margin-bottom: 16px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--amber), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .project-card:hover { border-color: var(--amber-dim); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .project-card:hover::before { opacity: 1; }
+    .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .project-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); }
+    .project-year { font-size: 11px; color: var(--muted); padding: 3px 10px; background: var(--bg3); border-radius: 20px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .tag {
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      background: var(--amber-glow);
+      color: var(--amber);
+      border: 1px solid var(--amber-dim);
+      letter-spacing: 0.5px;
+    }
+    .project-desc { font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.9; }
+    .project-desc strong { color: var(--white); }
+    .bullets { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .bullets li { font-size: 12px; color: var(--muted); padding-left: 16px; position: relative; }
+    .bullets li::before { content: '▸'; position: absolute; left: 0; color: var(--amber); }
+    .bullets li strong { color: var(--white); }
+    .project-link {
+      margin-top: 18px;
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--amber);
+      font-size: 11px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .project-link:hover { text-decoration: underline; }
+
+    /* ── CERTS ── */
+    .cert-list { display: flex; flex-direction: column; gap: 12px; }
+    .cert-item {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .cert-item:hover { border-color: var(--amber-dim); }
+    .cert-left .cert-title { font-size: 13px; font-weight: 500; color: var(--white); }
+    .cert-left .cert-org { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .cert-right { font-size: 11px; color: var(--amber); background: var(--amber-glow); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--amber-dim); white-space: nowrap; }
+
+    /* ── CONTACT ── */
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .contact-item {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .contact-item:hover { border-color: var(--amber-dim); color: var(--amber); transform: translateX(3px); }
+    .contact-item .c-ico { font-size: 18px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--bg3); border-radius: 6px; }
+    .contact-item .c-info .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; }
+    .contact-item .c-info .val { font-size: 12px; color: var(--white); margin-top: 2px; }
+    .contact-item:hover .c-info .val { color: var(--amber); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer span { color: var(--amber); }
+
+    /* ── KEYFRAMES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* stagger cards */
+    .skill-card:nth-child(1) { animation-delay: 0.05s; }
+    .skill-card:nth-child(2) { animation-delay: 0.10s; }
+    .skill-card:nth-child(3) { animation-delay: 0.15s; }
+    .skill-card:nth-child(4) { animation-delay: 0.20s; }
+    .skill-card:nth-child(5) { animation-delay: 0.25s; }
+    .skill-card:nth-child(6) { animation-delay: 0.30s; }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      margin-left: auto;
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--amber-dim); }
+    .theme-toggle .tt-opt {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 14px;
+      color: var(--muted);
+      transition: all 0.2s;
+      user-select: none;
+      letter-spacing: 0.5px;
+    }
+    .theme-toggle .tt-opt.active {
+      background: var(--amber);
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 580px) {
+      .hero { padding: 48px 0 40px; }
+      .hero h1 { letter-spacing: -1px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="dots">
+      <span class="dot r"></span>
+      <span class="dot y"></span>
+      <span class="dot g"></span>
+    </div>
+    <span class="tab-label">~/dvpnam/portfolio</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <span class="tt-opt active" id="ttDark">dark</span>
+      <span class="tt-opt" id="ttLight">light</span>
+    </button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="prompt-line">
+      <span class="p">dvpnam</span><span class="at">@</span><span>humg</span>
+      <span style="color:var(--muted)">~</span>
+      <span style="color:var(--white)">$</span>
+      <span style="color:var(--muted)">whoami</span>
+    </div>
+
+    <div class="status">
+      <span class="pulse"></span>
+      Available for Internship · Can start immediately
+    </div>
+
+    <h1><span class="hl">Nam</span> Dao<br>Vu Phuong</h1>
+
+    <p class="tagline">
+      Final-year CS student at HUMG.<br>
+      Building low-level systems in C, scripting in Python,<br>
+      and shipping web apps with Flask — on Linux, in the terminal.
+    </p>
+
+    <div class="cta-row">
+      <a href="https://github.com/dvpnam" target="_blank" class="btn btn-primary">
+        <span class="ico">⌥</span> github.com/dvpnam
+      </a>
+      <a href="/cdn-cgi/l/email-protection#6703111709060a56565127000a060e0b4904080a" class="btn btn-ghost">
+        <span class="ico">✉</span> <span class="__cf_email__" data-cfemail="b7d3c1c7d9d6da868681f7d0dad6dedb99d4d8da">[email&#160;protected]</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section">
+    <div class="sec-label">// skills</div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="cat">Languages</div>
+        <div class="items">
+          <span>C</span> · <span>Python 3</span> · <span>Bash</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="cat">Web</div>
+        <div class="items">
+          <span>HTML5</span> · <span>CSS3</span> · <span>JS</span><br>
+          <span>Flask</span> · <span>Jinja2</span> · <span>SQLite3</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="cat">Tools & Env</div>
+        <div class="items">
+          <span>Git</span> · <span>Linux</span> · <span>Vim</span><br>
+          <span>VSCode</span> · Terminal workflow
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="cat">Data Structures</div>
+        <div class="items">
+          <span>Array</span> · <span>Linked List</span><br>
+          <span>Stack</span> · <span>Queue</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="cat">Algorithms</div>
+        <div class="items">
+          <span>QuickSort</span> · <span>MergeSort</span><br>
+          <span>Binary Search</span> · <span>Recursion</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="cat">Systems</div>
+        <div class="items">
+          Manual memory management<br>
+          <span>malloc</span> / <span>free</span> · TCP Sockets
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section">
+    <div class="sec-label">// projects</div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">mini-redis</div>
+        <span class="project-year">2025</span>
+      </div>
+      <div class="tags">
+        <span class="tag">C</span>
+        <span class="tag">TCP Sockets</span>
+        <span class="tag">Manual Memory Management</span>
+        <span class="tag">Systems Programming</span>
+      </div>
+      <p class="project-desc">
+        A lightweight <strong>Redis-like key-value server</strong> written in pure C, built to explore
+        TCP networking, manual memory management, and string parsing with <strong>zero external dependencies</strong>.
+      </p>
+      <ul class="bullets">
+        <li>Implemented <strong>SET / GET / DEL / TTL / KEYS</strong> commands over TCP on port 6379</li>
+        <li>Added <strong>TTL with lazy expiration</strong> — expired keys evicted on access, mirroring Redis strategy</li>
+        <li>Split into three single-responsibility modules: <strong>server.c</strong>, <strong>parser.c</strong>, <strong>storage.c</strong></li>
+        <li>Applied buffer-safe string handling (<strong>strncpy / strncat</strong>) and <strong>SO_REUSEADDR</strong> for smooth restarts</li>
+      </ul>
+      <a href="https://github.com/dvpnam/mini-redis" target="_blank" class="project-link">
+        ↗ View on GitHub
+      </a>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">mini-nginx</div>
+        <span class="project-year">2025</span>
+      </div>
+      <div class="tags">
+        <span class="tag">C</span>
+        <span class="tag">HTTP/1.1</span>
+        <span class="tag">Multi-threading</span>
+        <span class="tag">Systems Programming</span>
+      </div>
+      <p class="project-desc">
+        A minimal <strong>HTTP/1.1 web server</strong> written in C (~400 LOC), built to understand
+        how web servers work from the ground up — TCP sockets, HTTP parsing, and static file serving
+        with <strong>zero external dependencies</strong>.
+      </p>
+      <ul class="bullets">
+        <li>Implemented full <strong>HTTP request parsing</strong> and static file serving with Content-Type detection</li>
+        <li>Added <strong>multi-threaded client handling</strong> and request logging</li>
+        <li>Supports <strong>directory index</strong> (/ → index.html) and 404 error handling</li>
+        <li>Benchmarked at <strong>764 req/sec</strong> with wrk (4 threads, 100 connections)</li>
+      </ul>
+      <a href="https://github.com/dvpnam/mini-nginx" target="_blank" class="project-link">
+        ↗ View on GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section class="section">
+    <div class="sec-label">// certifications</div>
+    <div class="cert-list">
+      <a href="https://certificates.cs50.io/3212fdd1-c465-4465-8ec7-ec38a9f88e0c.pdf?size=letter" target="_blank" class="cert-item" style="text-decoration:none;">
+        <div class="cert-left">
+          <div class="cert-title">CS50's Introduction to Computer Science (CS50x)</div>
+          <div class="cert-org">Harvard University / edX · C, Python, SQL, HTML/CSS/JS, Algorithms</div>
+        </div>
+        <div class="cert-right">2024 ↗</div>
+      </a>
+      <a href="https://certificates.cs50.io/785a5894-2d08-47ae-9289-d369858083ae.pdf?size=letter" target="_blank" class="cert-item" style="text-decoration:none;">
+        <div class="cert-left">
+          <div class="cert-title">CS50's Introduction to Programming with Python (CS50P)</div>
+          <div class="cert-org">Harvard University / edX · Functions, OOP, Testing, File I/O</div>
+        </div>
+        <div class="cert-right">2025 ↗</div>
+      </a>
+      <div class="cert-item">
+        <div class="cert-left">
+          <div class="cert-title">TOEIC Listening &amp; Reading</div>
+          <div class="cert-org">ETS · Technical reading &amp; writing proficiency</div>
+        </div>
+        <div class="cert-right">610 / 990</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section">
+    <div class="sec-label">// contact</div>
+    <div class="contact-grid">
+      <a href="/cdn-cgi/l/email-protection#6a0e1c1a040b075b5b5c2a0d070b030644090507" class="contact-item">
+        <div class="c-ico">✉</div>
+        <div class="c-info">
+          <div class="label">Email</div>
+          <div class="val"><span class="__cf_email__" data-cfemail="0c687a7c626d613d3d3a4c6b616d6560226f6361">[email&#160;protected]</span></div>
+        </div>
+      </a>
+      <a href="https://github.com/dvpnam" target="_blank" class="contact-item">
+        <div class="c-ico">⌥</div>
+        <div class="c-info">
+          <div class="label">GitHub</div>
+          <div class="val">github.com/dvpnam</div>
+        </div>
+      </a>
+      <div class="contact-item" style="cursor:default;">
+        <div class="c-ico">📍</div>
+        <div class="c-info">
+          <div class="label">Location</div>
+          <div class="val">Hanoi, Vietnam</div>
+        </div>
+      </div>
+      <div class="contact-item" style="cursor:default;">
+        <div class="c-ico">☎</div>
+        <div class="c-info">
+          <div class="label">Phone</div>
+          <div class="val">+84 0967 236 801</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span style="color:var(--muted)">Nam Dao Vu Phuong · <span>dvpnam</span> · Hanoi, Vietnam</span>
+    <span style="color:var(--muted)">Last updated <span>March 2026</span></span>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var html   = document.documentElement;
+    var toggle = document.getElementById("themeToggle");
+    var ttDark  = document.getElementById("ttDark");
+    var ttLight = document.getElementById("ttLight");
+
+    function applyTheme(t) {
+      html.setAttribute("data-theme", t);
+      if (t === "light") {
+        ttLight.classList.add("active");
+        ttDark.classList.remove("active");
+      } else {
+        ttDark.classList.add("active");
+        ttLight.classList.remove("active");
+      }
+      try { localStorage.setItem("theme", t); } catch(e) {}
+    }
+
+    var saved = "dark";
+    try { saved = localStorage.getItem("theme") || "dark"; } catch(e) {}
+    applyTheme(saved);
+
+    toggle.addEventListener("click", function () {
+      var next = html.getAttribute("data-theme") === "light" ? "dark" : "light";
+      applyTheme(next);
+    });
+  })();
+</script>
+</body>
+</html>

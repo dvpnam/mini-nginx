@@ -1,4 +1,4 @@
-# Mini Nginx (C)
+# Mini Nginx
 
 A minimal HTTP/1.1 web server written in C (~400 LOC).
 
